@@ -21,3 +21,7 @@ tasks.withType<KotlinCompile> {
 application {
     mainClass.set("MainKt")
 }
+
+tasks.withType<JavaExec>() {
+    standardInput = System.`in`
+}
