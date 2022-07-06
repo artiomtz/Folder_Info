@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.Date
 import java.io.File
 import java.text.SimpleDateFormat
 
@@ -18,13 +18,13 @@ fun folderSize(directory: File, files: MutableList<FileInfo>) : Long {
         val formatter = SimpleDateFormat("dd/MM/yyyy, HH:mm")
         val lastModifiedString = formatter.format(lastModified)
 
-        // if it's a file
+        // item is a file
         if (file.isFile) {
             val fileSize = file.length()
             directorySize += fileSize
             files.add(FileInfo(path = file.path, dateModified = lastModifiedString, size = fileSize, isFile = true))
         }
-        // if it's a folder
+        // item is a folder
         else {
             val folderSize = folderSize(file, files)
             directorySize += folderSize
