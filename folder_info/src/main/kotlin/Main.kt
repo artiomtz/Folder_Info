@@ -4,47 +4,67 @@ import java.text.SimpleDateFormat
 
 fun folderSize(directory: File, files: MutableList<FileInfo>) : Long {
     var directorySize = 1L
-    for (file in directory.listFiles()) {
+    val directoryFiles: Array<File>?
 
+    // verify subdirectory can be read
+    try {
+        directoryFiles = directory.listFiles()
+    } catch (e: Exception) {
+        return 0
+    }
+    // traverse subdirectory
+    for (file in directoryFiles) {
         val lastModified = Date(file.lastModified())
         val formatter = SimpleDateFormat("dd/MM/yyyy, HH:mm")
         val lastModifiedString = formatter.format(lastModified)
 
+        // if it's a file
         if (file.isFile) {
             val fileSize = file.length()
             directorySize += fileSize
-            files.add(FileInfo(path = file.path, dateModified = lastModifiedString, size = fileSize))
+            files.add(FileInfo(path = file.path, dateModified = lastModifiedString, size = fileSize, isFile = true))
         }
+        // if it's a folder
         else {
             val folderSize = folderSize(file, files)
             directorySize += folderSize
-            files.add(FileInfo(path = file.path, dateModified = lastModifiedString, size = folderSize))
+            files.add(FileInfo(path = file.path, dateModified = lastModifiedString, size = folderSize, isFile = false))
         }
     }
     return directorySize
 }
 
-fun main() {
-    println("This program will provide some basic information about a source folder.")
-    print("Please enter a path: (i.e. C:\\Users\\Dave\\Pictures) \n\n")
-    val path = "D:\\University\\4B\\REC 100"
-//    val path = "D:\\University\\Resume"
-//    val path = "C:\\Users\\Art\\Pictures"
-//    val path = readLine()
-    ///////// separate printing function
+fun printResults(files: MutableList<FileInfo>, numFolders: Int, directorySize: Long) {
+    print("The directory has ${files.size} items ($numFolders folders, ${files.size - numFolders} files) ")
+    println("and a total size of " + "%,d".format(directorySize) + " bytes.")
 
-    val files = mutableListOf<FileInfo>()
-    val directory = File(path) //////// check path exists
-    val directorySize = folderSize(directory, files)
-    files.sortByDescending { it.size }
-
-    // print results
-    println("The directory has ${files.size} items, and a total size of " + "%,d".format(directorySize) + " bytes.") ////////// separate files/folders count
+    // print header
     System.out.format("-".repeat(200) + "\n")
     System.out.format("| Size In Bytes        | Last Modification         | Path%n")
     System.out.format("-".repeat(200) + "\n")
+
+    // print results
     for (file in files) {
         System.out.format("| %-20s | %-25s | %-145s |%n", "%,d".format(file.size), file.dateModified, file.path)
     }
 }
-////////// comments
+
+fun main() {
+    println("This program will provide some basic information about a source folder.")
+    var directory = File("")
+
+    // wait for a correct path from console
+    while(!directory.exists()) {
+        println("Please enter a valid path: (i.e. C:\\Users\\Dave\\Pictures)\n")
+        val path = readLine().toString()
+        directory = File(path)
+    }
+    // traverse path
+    val files = mutableListOf<FileInfo>()
+    val directorySize = folderSize(directory, files)
+
+    // sort and print results
+    val numFolders = files.count { !it.isFile }
+    files.sortByDescending { it.size }
+    printResults(files, numFolders, directorySize)
+}
