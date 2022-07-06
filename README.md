@@ -27,5 +27,5 @@ gradle run
 
 
 ## Demo
-<img src="screenshot.png"/>
+<img src="screenshot.PNG"/>
  
