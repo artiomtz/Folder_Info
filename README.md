@@ -21,7 +21,7 @@ gradle run
 - Unit testing
 - Investigate more scenarios like permissions, hidden files, etc.
 - Check performance with larger input - Scalability
-- Verify required accuracy of results
+- Verify the required accuracy of results
 
 <br/>
 
